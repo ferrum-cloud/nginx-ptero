@@ -2,6 +2,8 @@ name: Nginx 8.3
 
 on:
   workflow_dispatch:
+  release:
+    types: [published]
 
 jobs:
   push:
