@@ -5,7 +5,7 @@ on:
 
 jobs:
   push:
-    name: "nginx-php:8.3"
+    name: "nginx-ptero:8.3"
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -28,4 +28,4 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: |
-            ghcr.io/maki-service-shop/nginx-php:8.3
+            ghcr.io/maki-service-shop/nginx-ptero:8.3
