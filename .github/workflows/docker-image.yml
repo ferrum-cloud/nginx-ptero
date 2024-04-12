@@ -16,11 +16,11 @@ jobs:
         with:
           version: "v0.5.1"
           buildkitd-flags: --debug
-      - uses: docker/login-action@v1
+      - uses: docker/login-action@v2
         with:
-            registry: ghcr.io
-            username: teeraphatch15224
-            password: ${{ secrets.GITHUB_TOKEN }}
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}  # Ensure this matches the owner of the repo
+          password: ${{ secrets.PAT }}  # Use a PAT instead of GITHUB_TOKEN
       - uses: docker/build-push-action@v2
         with:
           context: ./
