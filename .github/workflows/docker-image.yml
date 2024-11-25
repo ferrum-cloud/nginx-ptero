@@ -5,7 +5,7 @@ on:
 
 jobs:
   push:
-    name: "nginx-ptero:8.4"
+    name: "nginx-ptero:8.3"
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -28,4 +28,4 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: |
-            ghcr.io/ferrum-cloud/nginx-ptero:8.4
+            ghcr.io/ferrum-cloud/nginx-ptero:8.3
