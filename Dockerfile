@@ -1,11 +1,16 @@
-# Use the latest stable Alpine image
+# Use the latest Alpine image
 FROM alpine:latest
 
-# Install necessary tools and packages
-RUN apk update && apk --no-cache add \
+# Set environment variables
+ENV USER container
+ENV HOME /home/container
+
+# Update and install dependencies
+RUN apk --update --no-cache add \
     curl \
     ca-certificates \
-    nginx \
+    nginx && \
+    apk add --no-cache \
     php84 \
     php84-xml \
     php84-exif \
@@ -40,20 +45,18 @@ RUN apk update && apk --no-cache add \
     php84-tokenizer \
     php84-simplexml
 
-# Copy Composer from the official Composer image
+# Add Composer from the official Composer image
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Set the container user
-USER container
-ENV USER container
-ENV HOME /home/container
-
-# Set the working directory
+# Create and set the working directory
 WORKDIR /home/container
 
 # Copy the entrypoint script into the container
 COPY ./entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
-# Default command
+# Set default user
+USER container
+
+# Entrypoint and command
 CMD ["/bin/ash", "/entrypoint.sh"]
