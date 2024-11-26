@@ -31,6 +31,10 @@ RUN apk update && \
     php84-xml \
     php84-zip
 
+
+# Set executable permissions
+RUN chmod +x /start.sh /entrypoint.sh
+
 # Set working directory
 WORKDIR /home/container
 
