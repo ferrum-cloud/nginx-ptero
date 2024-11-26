@@ -1,3 +1,3 @@
 <?php
-echo "Hello World! 555";
+echo "Welcome to PHP Nginx 8.4 By Ferrum Cloud";
 phpinfo();
