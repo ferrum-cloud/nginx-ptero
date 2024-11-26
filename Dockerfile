@@ -31,18 +31,15 @@ RUN apk update && \
     php84-xml \
     php84-zip
 
-
-# Set executable permissions
-RUN chmod +x /start.sh /entrypoint.sh
-
 # Set working directory
 WORKDIR /home/container
 
-# Clean up APK cache to reduce image size
-RUN rm -rf /var/cache/apk/*
+# Copy start and entrypoint scripts BEFORE chmod
+COPY start.sh /start.sh
+COPY entrypoint.sh /entrypoint.sh
 
-# Set the command to run your application or PHP-FPM
-CMD ["php-fpm8.4", "-F"]
+# Set executable permissions
+RUN chmod +x /start.sh /entrypoint.sh
 
 # Set entrypoint
 ENTRYPOINT ["/entrypoint.sh"]
