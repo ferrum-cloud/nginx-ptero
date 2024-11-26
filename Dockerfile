@@ -31,15 +31,15 @@ RUN apk update && \
     php84-xml \
     php84-zip
 
-# Set working directory
-WORKDIR /home/container
-
-# Copy start and entrypoint scripts BEFORE chmod
-COPY start.sh /start.sh
-COPY entrypoint.sh /entrypoint.sh
-
-# Set executable permissions
+    # Set executable permissions
 RUN chmod +x /start.sh /entrypoint.sh
 
-# Set entrypoint
-ENTRYPOINT ["/entrypoint.sh"]
+USER container
+ENV  USER container
+ENV HOME /home/container
+    
+WORKDIR /home/container
+COPY ./entrypoint.sh /entrypoint.sh
+    
+    
+CMD ["/bin/ash", "/entrypoint.sh"]

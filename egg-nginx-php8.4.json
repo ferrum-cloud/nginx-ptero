@@ -4,21 +4,23 @@
         "version": "PTDL_v2",
         "update_url": null
     },
-    "exported_at": "2024-04-16T20:17:20+01:00",
-    "name": "NGINX PHP 8.4",
+    "exported_at": "2023-02-07T09:58:34+01:00",
+    "name": "Nginx PHP",
     "author": "support@fe-grp.com",
-    "description": "PHP Made By Ferrum Cloud\r\n\r\n Credit Sigma Productions 2023",
+    "description": "",
     "features": null,
     "docker_images": {
+        "PHP 8.3": " ghcr.io\/ferrum-cloud\/nginx-ptero:8.3",
         "PHP 8.4": " ghcr.io\/ferrum-cloud\/nginx-ptero:8.4"
+
     },
     "file_denylist": [],
-    "startup": "{{STARTUP_CMD}}; if [[ ! -z ${COMPOSER_MODULES} ]]; then composer require ${COMPOSER_MODULES} --working-dir=\/home\/container\/webroot; fi;",
+    "startup": "{{STARTUP_CMD}}; if [[ ! -z \"${COMPOSER_MODULES}\" ]]; then composer require ${COMPOSER_MODULES} --working-dir=\/home\/container\/webroot; fi;",
     "config": {
         "files": "{\r\n    \"nginx\/conf.d\/default.conf\": {\r\n        \"parser\": \"file\",\r\n        \"find\": {\r\n            \"    listen \": \"    listen {{server.build.default.port}};\"\r\n        }\r\n    }\r\n}",
         "startup": "{\r\n    \"done\": \"\",\r\n    \"userInteraction\": []\r\n}",
         "logs": "{\r\n    \"custom\": false,\r\n    \"location\": \"logs\/latest.log\"\r\n}",
-        "stop": "^C"
+        "stop": "^C & ^C"
     },
     "scripts": {
         "installation": {
