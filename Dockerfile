@@ -31,15 +31,15 @@ RUN apk update && \
     php84-xml \
     php84-zip
 
-    # Set executable permissions
-RUN chmod +x /start.sh /entrypoint.sh
+# Create entrypoint script
+RUN echo '#!/bin/ash' > /entrypoint.sh && \
+    echo 'exec "$@"' >> /entrypoint.sh && \
+    chmod +x /entrypoint.sh
 
 USER container
-ENV  USER container
-ENV HOME /home/container
+ENV USER=container
+ENV HOME=/home/container
     
 WORKDIR /home/container
-COPY ./entrypoint.sh /entrypoint.sh
-    
     
 CMD ["/bin/ash", "/entrypoint.sh"]
