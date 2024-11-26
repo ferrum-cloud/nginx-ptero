@@ -1,4 +1,4 @@
-# Use Alpine edge for PHP 8.4
+# Use Alpine edge for PHP 8.3
 FROM alpine:edge
 
 # Add community and testing repositories
@@ -12,24 +12,24 @@ RUN apk update && \
     bash \
     nginx \
     curl \
-    php84 \
-    php84-fpm \
-    php84-curl \
-    php84-dom \
-    php84-fileinfo \
-    php84-gd \
-    php84-json \
-    php84-mbstring \
-    php84-mysqli \
-    php84-openssl \
-    php84-pdo \
-    php84-pdo_mysql \
-    php84-phar \
-    php84-session \
-    php84-simplexml \
-    php84-tokenizer \
-    php84-xml \
-    php84-zip
+    php83 \
+    php83-fpm \
+    php83-curl \
+    php83-dom \
+    php83-fileinfo \
+    php83-gd \
+    php83-json \
+    php83-mbstring \
+    php83-mysqli \
+    php83-openssl \
+    php83-pdo \
+    php83-pdo_mysql \
+    php83-phar \
+    php83-session \
+    php83-simplexml \
+    php83-tokenizer \
+    php83-xml \
+    php83-zip
 
 # Set working directory
 WORKDIR /home/container
