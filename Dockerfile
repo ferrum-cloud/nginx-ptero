@@ -1,51 +1,69 @@
 FROM alpine:latest
 
-# Add edge/testing repository for newer packages
-RUN echo "@testing https://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories
-
-# Update and install system dependencies
-RUN apk update && \
-    apk add --no-cache \
+# Install build dependencies
+RUN apk add --no-cache \
+    alpine-sdk \
+    autoconf \
+    automake \
+    bash \
+    bison \
+    build-base \
     curl \
     ca-certificates \
-    nginx
+    nginx \
+    re2c \
+    libxml2-dev \
+    sqlite-dev \
+    openssl-dev \
+    libzip-dev \
+    curl-dev \
+    libpng-dev \
+    libjpeg-turbo-dev \
+    freetype-dev \
+    libxslt-dev \
+    postgresql-dev \
+    oniguruma-dev \
+    gettext-dev \
+    icu-dev
 
-# Install PHP 8.4 (if available in testing) with all extensions
-RUN apk add --no-cache \
-    php8.4@testing \
-    php8.4-xml@testing \
-    php8.4-exif@testing \
-    php8.4-fpm@testing \
-    php8.4-session@testing \
-    php8.4-soap@testing \
-    php8.4-openssl@testing \
-    php8.4-gmp@testing \
-    php8.4-pdo_odbc@testing \
-    php8.4-json@testing \
-    php8.4-dom@testing \
-    php8.4-pdo@testing \
-    php8.4-zip@testing \
-    php8.4-mysqli@testing \
-    php8.4-sqlite3@testing \
-    php8.4-pdo_pgsql@testing \
-    php8.4-bcmath@testing \
-    php8.4-gd@testing \
-    php8.4-odbc@testing \
-    php8.4-pdo_mysql@testing \
-    php8.4-pdo_sqlite@testing \
-    php8.4-gettext@testing \
-    php8.4-xmlreader@testing \
-    php8.4-bz2@testing \
-    php8.4-iconv@testing \
-    php8.4-pdo_dblib@testing \
-    php8.4-curl@testing \
-    php8.4-ctype@testing \
-    php8.4-phar@testing \
-    php8.4-fileinfo@testing \
-    php8.4-mbstring@testing \
-    php8.4-tokenizer@testing \
-    php8.4-simplexml@testing \
-    && rm -rf /var/cache/apk/*
+# Download and verify PHP 8.4.1
+RUN cd /tmp && \
+    curl -L https://www.php.net/distributions/php-8.4.1.tar.gz -o php-8.4.1.tar.gz && \
+    echo "c3d1ce4157463ea43004289c01172deb54ce9c5894d8722f4e805461bf9feaec  php-8.4.1.tar.gz" | sha256sum -c - && \
+    tar -xzf php-8.4.1.tar.gz && \
+    cd php-8.4.1 && \
+    ./configure \
+        --prefix=/usr \
+        --sysconfdir=/etc/php \
+        --with-config-file-path=/etc/php \
+        --with-config-file-scan-dir=/etc/php/conf.d \
+        --enable-fpm \
+        --with-fpm-user=container \
+        --with-fpm-group=container \
+        --disable-debug \
+        --enable-intl \
+        --enable-mbstring \
+        --enable-soap \
+        --enable-sockets \
+        --with-curl \
+        --with-iconv \
+        --with-openssl \
+        --with-sqlite3 \
+        --with-pdo-sqlite \
+        --with-pdo-mysql \
+        --with-pdo-pgsql \
+        --with-mysqli \
+        --with-zlib \
+        --with-zip \
+        --with-gd \
+        --with-jpeg \
+        --with-freetype \
+        --enable-bcmath \
+        --enable-exif && \
+    make -j$(nproc) && \
+    make install && \
+    cd .. && \
+    rm -rf php-8.4.1*
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
