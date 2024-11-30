@@ -1,86 +1,15 @@
 FROM alpine:latest
 
-# Install build dependencies
-RUN apk add --no-cache \
-    alpine-sdk \
-    autoconf \
-    automake \
-    bash \
-    bison \
-    build-base \
-    curl \
-    ca-certificates \
-    nginx \
-    re2c \
-    libxml2-dev \
-    sqlite-dev \
-    openssl-dev \
-    libzip-dev \
-    curl-dev \
-    libpng-dev \
-    libjpeg-turbo-dev \
-    freetype-dev \
-    libxslt-dev \
-    postgresql-dev \
-    oniguruma-dev \
-    gettext-dev \
-    icu-dev \
-    wget
+RUN apk --update --no-cache add curl ca-certificates nginx
+RUN apk add php84 php84-xml php84-exif php84-fpm php84-session php84-soap php84-openssl php84-gmp php84-pdo_odbc php84-json php84-dom php84-pdo php84-zip php84-mysqli php84-sqlite3 php84-pdo_pgsql php84-bcmath php84-gd php84-odbc php84-pdo_mysql php84-pdo_sqlite php84-gettext php84-xmlreader php84-bz2 php84-iconv php84-pdo_dblib php84-curl php84-ctype php84-phar php84-fileinfo php84-mbstring php84-tokenizer php84-simplexml
+COPY --from=composer:latest  /usr/bin/composer /usr/bin/composer
 
-# Download and verify PHP 8.4.1
-RUN mkdir -p /tmp/php-build && cd /tmp/php-build \
-    && wget https://github.com/php/php-src/archive/refs/tags/php-8.4.1.tar.gz \
-    && tar -xzf php-8.4.1.tar.gz \
-    && cd php-src-php-8.4.1 \
-    && ./buildconf --force \
-    && ./configure \
-        --prefix=/usr \
-        --sysconfdir=/etc/php \
-        --with-config-file-path=/etc/php \
-        --with-config-file-scan-dir=/etc/php/conf.d \
-        --enable-fpm \
-        --with-fpm-user=container \
-        --with-fpm-group=container \
-        --disable-debug \
-        --enable-intl \
-        --enable-mbstring \
-        --enable-soap \
-        --enable-sockets \
-        --with-curl \
-        --with-iconv \
-        --with-openssl \
-        --with-sqlite3 \
-        --with-pdo-sqlite \
-        --with-pdo-mysql \
-        --with-pdo-pgsql \
-        --with-mysqli \
-        --with-zlib \
-        --with-zip \
-        --with-gd \
-        --with-jpeg \
-        --with-freetype \
-        --enable-bcmath \
-    && make -j$(nproc) \
-    && make install \
-    && cd / \
-    && rm -rf /tmp/php-build
-
-# Install Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-
-# Create non-root user
-RUN adduser -D -u 1000 container
-
-# Set user and environment
 USER container
-ENV USER=container
-ENV HOME=/home/container
+ENV  USER container
+ENV HOME /home/container
 
-# Set working directory
 WORKDIR /home/container
-
-# Copy entrypoint script
 COPY ./entrypoint.sh /entrypoint.sh
 
-# Set entrypoint
+
 CMD ["/bin/ash", "/entrypoint.sh"]
