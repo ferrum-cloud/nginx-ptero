@@ -24,15 +24,16 @@ RUN apk add --no-cache \
     postgresql-dev \
     oniguruma-dev \
     gettext-dev \
-    icu-dev
+    icu-dev \
+    wget
 
 # Download and verify PHP 8.4.1
-RUN cd /tmp && \
-    curl -L https://www.php.net/distributions/php-8.4.1.tar.gz -o php-8.4.1.tar.gz && \
-    echo "c3d1ce4157463ea43004289c01172deb54ce9c5894d8722f4e805461bf9feaec  php-8.4.1.tar.gz" | sha256sum -c - && \
-    tar -xzf php-8.4.1.tar.gz && \
-    cd php-8.4.1 && \
-    ./configure \
+RUN mkdir -p /tmp/php-build && cd /tmp/php-build \
+    && wget https://github.com/php/php-src/archive/refs/tags/php-8.4.1.tar.gz \
+    && tar -xzf php-8.4.1.tar.gz \
+    && cd php-src-php-8.4.1 \
+    && ./buildconf --force \
+    && ./configure \
         --prefix=/usr \
         --sysconfdir=/etc/php \
         --with-config-file-path=/etc/php \
@@ -59,21 +60,27 @@ RUN cd /tmp && \
         --with-jpeg \
         --with-freetype \
         --enable-bcmath \
-        --enable-exif && \
-    make -j$(nproc) && \
-    make install && \
-    cd .. && \
-    rm -rf php-8.4.1*
+    && make -j$(nproc) \
+    && make install \
+    && cd / \
+    && rm -rf /tmp/php-build
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-USER container
-ENV  USER container
-ENV HOME /home/container
+# Create non-root user
+RUN adduser -D -u 1000 container
 
+# Set user and environment
+USER container
+ENV USER=container
+ENV HOME=/home/container
+
+# Set working directory
 WORKDIR /home/container
+
+# Copy entrypoint script
 COPY ./entrypoint.sh /entrypoint.sh
 
-
+# Set entrypoint
 CMD ["/bin/ash", "/entrypoint.sh"]
